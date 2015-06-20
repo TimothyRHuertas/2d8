@@ -10,7 +10,7 @@ export default class IndexComponent extends React.Component {
 
     return (
       <section>
-        <h2>react-webpack-boilerplate timmy</h2>
+        <h2>react-webpack-boilerplate timmys</h2>
         <ul ref="indexList" className="index-list">
           {this.props.items.map((item, index) => {
             return (<li key={index}>item {item}</li>);
