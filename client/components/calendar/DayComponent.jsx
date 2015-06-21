@@ -17,12 +17,15 @@ var layOutDay = function (events) {
       // columns there are currently overlapping and the latest end time.
       // If the current event starts after the stack, we create a new stack
       // containing the current event.
-      if(event.id===5)debugger;
-      if(event.start >= stack.end || stacks.length === 0) {
+      //debugger;
+      // if(event.id ===5) debugger;
+
+      if(event.start >= stack.end || stacks.length === 0 ) {
         stacks.push({columns: [{end: 0}], end: 0});
         stack = _.last(stacks);
         columnCount = 0;
-      };
+      }
+     
       
       // Set the currents end date to the stacks end time if it is larger
       if(event.end >stack.end) {
@@ -48,21 +51,48 @@ var layOutDay = function (events) {
         end: event.end
       };
 
+      
+
       // If we found a spare place in a previous column for the event
       // we do not need to add a new column
       if(!foundSparePlace) {
         columnCount++;
       }
+/*
+      var doit = _.any(stack.columns, function(c){return c.end <= event.start});
 
+      if(doit){
+        //debugger;
+        stack = _.clone(stack);
+        stack.columns = _.filter(stack.columns, function(c){return c.end > event.start}); 
+        stack.end = _.last(stack.columns).end; 
+        // columnCount = stack.columns.length;
+      }
+*/
       // Attach the current stack to the current event so we can run some calcs
       event.stack = stack;
     });
 
     // Now that we have all the neccesary information, let's generate the
     // appropriate output.
+
+    //calc widths
+    events.forEach(event => {
+      var cols = event.stack.columns;
+     
+      for(var i=event.column; i<cols.length; i++){
+        event.colspan = Math.max(1, i-event.column);
+        if(i !== event.column && event.start<cols[i].end){
+          break;
+        } 
+      }
+    });
+
+
+
     _.each(events, function(event) {
       event.left = dayboxWidth / event.stack.columns.length * event.column;
-      event.width = dayboxWidth / event.stack.columns.length;
+      event.width = dayboxWidth *(event.colspan/event.stack.columns.length);
       event.height = event.end - event.start;
       event.top = event.start;
      // delete event.column;
@@ -124,6 +154,7 @@ export default class DayComponent extends React.Component {
     });
 
     layOutDay(this.props.entries);
+
     var apptNodes = this.props.entries.map( event => {
         var pos = event;
         return (<div key={event.id} style={{top: pos.top, height: pos.height, left: pos.left + '%', width: pos.width +"%", padding: 5, background: "rgb(255, 229, 191)", opacity: .69, boxSizing: "border-box", position: "absolute", overflow: "hidden",  borderLeft: "3px solid #ff9502"}}>
