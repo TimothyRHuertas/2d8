@@ -28,24 +28,82 @@ export default class DayComponent extends React.Component {
 
     sorted.forEach((currentEntry, outer) => {
       currentEntry.position = 0;
+      currentEntry.possiblePosition = 0;
+
       var currentStartTime = currentEntry.time.start.getTime();
       var currentEndTime = currentEntry.time.end.getTime();
 
+      //populate items in cluster
+
+      
+
       for(var inner=outer; inner>=0; inner--){
-     //   if(outer===2){debugger;}
+        //if(outer===3){debugger;}
         var entry = sorted[inner];
         var startTime = entry.time.start.getTime();
         var endTime = entry.time.end.getTime();
 
-        if( (entry !== currentEntry) && 
+        if( (entry !== currentEntry) && //(!entry.position || entry.position<currentEntry.position) &&
           ((currentStartTime >= startTime && currentStartTime <= endTime) 
             || (currentEndTime <= endTime && currentEndTime >= startTime)) ){
-          currentEntry.position++;  
+          currentEntry.possiblePosition++;
+
+          if(inner){
+            var endTimeOfItemBeforeConflict = sorted[inner-1].time.end.getTime();
+            if(currentStartTime <= endTimeOfItemBeforeConflict || currentEntry.possiblePosition > entry.position){
+              currentEntry.position = currentEntry.possiblePosition; 
+              
+            }
+          }
+          else {
+            currentEntry.position = currentEntry.possiblePosition;
+          }
+          //go back and find  position of conflict
+          //currentEntry.position -= entry.position;  
         }
       } 
+
+
+      
     });
 
-     var itemsInCluster = sorted[sorted.length-1].position + 1;
+
+
+
+    sorted.forEach((currentEntry) => {
+      currentEntry.itemsInCluster = 0;
+
+      var currentStartTime = currentEntry.time.start.getTime();
+      var currentEndTime = currentEntry.time.end.getTime();
+         sorted.forEach((entry) => {
+          var startTime = entry.time.start.getTime();
+          var endTime = entry.time.end.getTime();
+
+          if(  //(!entry.position || entry.position<currentEntry.position) &&
+            ((currentStartTime >= startTime && currentStartTime <= endTime) 
+              || (currentEndTime <= endTime && currentEndTime >= startTime)) ){
+            currentEntry.itemsInCluster= Math.max(currentEntry.itemsInCluster, entry.position);
+          }  
+        });
+    });
+
+     sorted.forEach((currentEntry) => {
+      currentEntry.itemsInCluster = 0;
+
+      var currentStartTime = currentEntry.time.start.getTime();
+      var currentEndTime = currentEntry.time.end.getTime();
+         sorted.forEach((entry) => {
+          var startTime = entry.time.start.getTime();
+          var endTime = entry.time.end.getTime();
+
+          if(  //(!entry.position || entry.position<currentEntry.position) &&
+            ((currentStartTime >= startTime && currentStartTime <= endTime) 
+              || (currentEndTime <= endTime && currentEndTime >= startTime)) ){
+            currentEntry.itemsInCluster= Math.max(currentEntry.itemsInCluster, entry.itemsInCluster);
+          }  
+        });
+    });
+    /* var itemsInCluster = sorted[sorted.length-1].position + 1;
     
     for(var i=sorted.length-1; i>=1; i--){
       var right = sorted[i];
@@ -58,7 +116,7 @@ export default class DayComponent extends React.Component {
         itemsInCluster = left.position + 1
       }
 
-    }
+    }*/
 console.log(sorted);
 
 //end
@@ -96,8 +154,8 @@ console.log(sorted);
 
     var events = this.props.entries.map((entry, index) => {
       var start = entry.time.start;
-      var width = selfWidth/entry.itemsInCluster;
-      var left = ((selfWidth/entry.itemsInCluster) * entry.position) + lineLeft;
+      var width = selfWidth/(entry.itemsInCluster + 1);
+      var left = ((selfWidth/(entry.itemsInCluster+1)) * entry.position) + lineLeft;
       var top = start.getHours() * lineHeight;
       top += start.getMinutes()/60 * lineHeight;
 
