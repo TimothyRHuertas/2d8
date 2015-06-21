@@ -1,86 +1,76 @@
 import React from 'react';
 import _ from 'lodash';
 
+var layOutDay = function (events) {
+    
+    // Sort the stacks by the start time, to make calculations easier
+    events = _.sortBy(events, function(event){ return event.start; });
 
-//Find if given two appt's are overlapping
-function isOverlapping(srcAppt, tgtAppt){
-    return (srcAppt.id != tgtAppt.id)       //Not same appt
-        && ( srcAppt.start < tgtAppt.end )  //Check boundries
-        && ( srcAppt.end > tgtAppt.start ); //Check boundries
-};
+    var columnCount = 0;
+    var stacks = [];
+    var stack = {end: 0};
+    var dayboxWidth = 100;
+    // Loop through each event
+    _.each(events, function(event, index){
 
-//Adjust right appts
-function adjustRight(appt, overlapHash){
+      // Each event gets placed in a stack. A stack remembers how many 
+      // columns there are currently overlapping and the latest end time.
+      // If the current event starts after the stack, we create a new stack
+      // containing the current event.
+      if(event.id===5)debugger;
+      if(event.start >= stack.end || stacks.length === 0) {
+        stacks.push({columns: [{end: 0}], end: 0});
+        stack = _.last(stacks);
+        columnCount = 0;
+      };
+      
+      // Set the currents end date to the stacks end time if it is larger
+      if(event.end >stack.end) {
+        stack.end = event.end;
+      }
 
-    _.each(overlapHash, function(overlapAppt){
+      // We keep track of what column the event should be placed in. By default
+      // it assumes there will be a new column each time there is a new event
+      event.column = columnCount;
 
-        if(appt.col < overlapAppt.col){
-            appt.right = appt.right || [];
-            appt.right.push(overlapAppt);
-        }else{
-            overlapAppt.right = overlapAppt.right || [];
-            overlapAppt.right.push(appt);
-        }
+      // Sometimes there will be room in previous columns and a new column
+      // won't be required. We loop through the previous columns to check if any
+      // have enough room. Each column has an end time so we don't overlap them.
+      var foundSparePlace = _.any(stack.columns, function(currentColumn, index) {
+        if(columnCount !== 0 && event.start > currentColumn.end) {
+          event.column = index;
+          return true;
+        } 
+      });
 
-    }, this);
+      // Update the columns end time to the current events end time
+      stack.columns[event.column] = {
+        end: event.end
+      };
 
-};
+      // If we found a spare place in a previous column for the event
+      // we do not need to add a new column
+      if(!foundSparePlace) {
+        columnCount++;
+      }
 
-//Compute max column for a given appt.
-function computeMaxCol(appt, max){
-    if(appt.maxdone){
-        return appt.maxcol;
-    }
+      // Attach the current stack to the current event so we can run some calcs
+      event.stack = stack;
+    });
 
-    max = max || -1;
-    appt.maxcol = _.max([appt.col, appt.maxcol, max]);
-    if(appt.right){
-        //Recursive alogo. to go find the maxCol in all my right nodes
-        _.each(appt.right, function(a){
-            appt.maxcol = _.max([appt.col, appt.maxcol, computeMaxCol(a, appt.maxcol)]);
-        }, this)
-    }
-    //set breaker to not lead to infinite recursion
-    appt.maxdone = true;
-    return appt.maxcol;
-};
+    // Now that we have all the neccesary information, let's generate the
+    // appropriate output.
+    _.each(events, function(event) {
+      event.left = dayboxWidth / event.stack.columns.length * event.column;
+      event.width = dayboxWidth / event.stack.columns.length;
+      event.height = event.end - event.start;
+      event.top = event.start;
+     // delete event.column;
+      //delete event.stack;
+    });
 
-//Calculated width of an appt
-function computeWidth(appt, totalWidth){
-    var rightLen = ( appt.right && appt.right.length ) || 0,
-        colWidth = totalWidth / (appt.maxcol+1),
-        i = appt.col+1, cols=1;
-
-    //Expand and fill the missing cols
-    if(appt.col + rightLen < appt.maxcol){
-        for(; i<=appt.maxcol; i++){
-            var match = _.find(appt.right, function(ra){
-                return (ra.col == i);
-            });
-            if(match){
-                break;
-            }
-            cols++;
-        }
-        return cols*colWidth;
-    }else{
-        return colWidth;
-
-    }
-};
-
-//Compute position of an appt
-function computePosition(appt, totalWidth){
-    var width = computeWidth(appt, totalWidth);
-    appt.pos = {
-        top: appt.start,
-        //left: ( appt.col*width ),
-        left: (appt.col*(totalWidth/(appt.maxcol + 1))),
-        width: width,
-        height: ( appt.end - appt.start )
-    };
-};
-
+    return events;
+  };
 
 export default class DayComponent extends React.Component {
   render(){
@@ -115,23 +105,28 @@ export default class DayComponent extends React.Component {
     /*box for event*/
    //Compute position for each appt.
     
-    this.props.entries.forEach((event, idx) => {
-     // event.start = event.time.start.getHours() * 60 + event.time.start.getMinutes();
-    //  event.end = event.time.end.getHours() * 60 + event.time.end.getMinutes();
 
+    //decorate events with a pos
+    this.props.entries.forEach((event, idx) => {
       event.start = event.time.start.getHours() * this.props.lineHeight + event.time.start.getMinutes() /60 * this.props.lineHeight;
       event.end = event.time.end.getHours() * this.props.lineHeight + event.time.end.getMinutes() /60 * this.props.lineHeight;
       event.id = idx;
+      /*event.pos = {
+        top: event.start,
+        height: event.end - event.start,
+        left: 0,
+        right: 0,
+
+      }*/
+
+      console.log(event);
 
     });
 
-    this.layOutDay(_.sortBy(this.props.entries, "start"));
-
-    console.log(this.props.entries);
-
+    layOutDay(this.props.entries);
     var apptNodes = this.props.entries.map( event => {
-        var pos = event.pos;
-        return (<div key={event.id} style={{padding: 5, width: pos.width + '%', background: "rgb(255, 229, 191)", opacity: .69, boxSizing: "border-box", position: "absolute", overflow: "hidden", top: pos.top, height: pos.height, left: pos.left + '%', borderLeft: "3px solid #ff9502"}}>
+        var pos = event;
+        return (<div key={event.id} style={{top: pos.top, height: pos.height, left: pos.left + '%', width: pos.width +"%", padding: 5, background: "rgb(255, 229, 191)", opacity: .69, boxSizing: "border-box", position: "absolute", overflow: "hidden",  borderLeft: "3px solid #ff9502"}}>
            {event.title}
           </div>);
     });
@@ -148,60 +143,7 @@ export default class DayComponent extends React.Component {
     );
   }
 
-  layOutDay(appts){
-      var pAppts = this.process(appts),
-          layout = [];
-
-      //Compute position for each appt.
-      _.each(pAppts, function(appt){
-          computePosition(appt, 100);
-      }, this);
-
-      return pAppts;
-  }
-
-  //Process appointments to read overlap and find col.
-  process(appts){
-    //Run each appt.
-    _.each(appts, function(appt, index, appts){
-        var overlap = false, overlapHash = [], overlapCol = [],
-            i=0, tmpAppt;
-
-        appt.col = 0;
-        appt.maxcol = 0;
-
-        for(; i<index; i++ ){
-            tmpAppt = appts[i];
-            if(isOverlapping(appt, tmpAppt)){
-                //update overlap flag
-                overlap = true;
-
-                //overlapping appts
-                overlapHash.push(tmpAppt);
-
-                //Calculate the correct position
-                overlapCol[tmpAppt.col] = true;
-                while(overlapCol[appt.col]){
-                    appt.col++;
-                }
-            }
-        }
-
-        //figure out who is on your right
-        if(overlap) {
-            adjustRight(appt, overlapHash);
-        }
-
-    }, this);
-
-    //Once processed, Compute maxcol for each appt.
-    _.each(appts, function(a){
-        computeMaxCol(a);
-    }, this);
-
-    //Porcessed appts
-    return appts;
-  }
+  
 
 }
 
