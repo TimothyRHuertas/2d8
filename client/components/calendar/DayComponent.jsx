@@ -80,11 +80,16 @@ var layOutDay = function (events) {
     events.forEach(event => {
       var cols = event.stack.columns;
      
-      for(var i=event.column; i<cols.length; i++){
-        event.colspan = Math.max(1, i-event.column);
-        if(i !== event.column && event.start<cols[i].end){
-          break;
-        } 
+      for(var i=event.column; i<=cols.length; i++){
+        if(i===cols.length){
+          event.colspan = cols.length - event.column;
+        }
+        else {
+          event.colspan = i-event.column;
+          if(i !== event.column && event.start<cols[i].end){
+            break;
+          } 
+        }
       }
     });
 
@@ -141,16 +146,7 @@ export default class DayComponent extends React.Component {
       event.start = event.time.start.getHours() * this.props.lineHeight + event.time.start.getMinutes() /60 * this.props.lineHeight;
       event.end = event.time.end.getHours() * this.props.lineHeight + event.time.end.getMinutes() /60 * this.props.lineHeight;
       event.id = idx;
-      /*event.pos = {
-        top: event.start,
-        height: event.end - event.start,
-        left: 0,
-        right: 0,
-
-      }*/
-
       console.log(event);
-
     });
 
     layOutDay(this.props.entries);
