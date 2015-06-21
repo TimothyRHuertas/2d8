@@ -179,7 +179,7 @@ for (m=0; m<MINUTESINDAY; m++) {
       numx = event.numcolumns;
       xfactor = 1 / numx;
       left = (event.leftindex * xfactor * 100);
-      eventNodes.push((<div key={event.id} style={{padding: 5, width: Math.floor(100 * xfactor) + '%', background: "rgb(255, 229, 191)", opacity: .69, boxSizing: "border-box", position: "absolute", overflow: "hidden", top: event.topPos, height: event.height, left: (left) + '%', borderLeft: "3px solid #ff9502"}}>
+      eventNodes.push((<div key={event.id} style={{padding: 5, width: (100 * xfactor) + '%', background: "rgb(255, 229, 191)", opacity: .69, boxSizing: "border-box", position: "absolute", overflow: "hidden", top: event.topPos, height: event.height, left: (left) + '%', borderLeft: "3px solid #ff9502"}}>
           {event.title}
         </div>));
     }
