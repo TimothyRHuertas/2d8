@@ -32,13 +32,14 @@ export default class DayComponent extends React.Component {
       var currentEndTime = currentEntry.time.end.getTime();
 
       for(var inner=outer; inner>=0; inner--){
+     //   if(outer===2){debugger;}
         var entry = sorted[inner];
         var startTime = entry.time.start.getTime();
         var endTime = entry.time.end.getTime();
 
         if( (entry !== currentEntry) && 
-          ((startTime>=currentStartTime && startTime<=currentEndTime) || 
-            (endTime>=currentStartTime && endTime<=currentEndTime)) ){
+          ((currentStartTime >= startTime && currentStartTime <= endTime) 
+            || (currentEndTime <= endTime && currentEndTime >= startTime)) ){
           currentEntry.position++;  
         }
       } 

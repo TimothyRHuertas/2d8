@@ -33,6 +33,8 @@ module.exports = [
     'time': {
       'start': new Date(today.getFullYear(), today.getMonth(), today.getDate(), '9', '30'),
       'end': new Date(today.getFullYear(), today.getMonth(), today.getDate(), '10', '0')
+         //   'end': new Date(today.getFullYear(), today.getMonth(), today.getDate(), '18', '0')
+
     }
   },
   {
