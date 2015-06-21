@@ -101,5 +101,23 @@ module.exports = [
       'start': new Date(today.getFullYear(), today.getMonth(), today.getDate(), '12', '0'),
       'end': new Date(today.getFullYear(), today.getMonth(), today.getDate(), '16', '0')
     }
+  },
+  ///
+  {
+    'title': 'Spreadsheets Made Easy with Numbers for Mac',
+    'image': 'http://images.apple.com/205/datapub/retail/en_US/concierge/workshop-icons/icon_numbers.png',
+    'description': 'We’ll discuss how you can use the Numbers app to easily create and track to-do lists, a personal budget, travel plans, and more — even if you’re not a spreadsheet expert.',
+    'presenter': [
+      'Johnny Appleseed',
+      'Jane Doe'
+    ],
+    'seats': {
+      'total': 15,
+      'available': 2
+    },
+    'time': {
+      'start': new Date(today.getFullYear(), today.getMonth(), today.getDate(), '18', '0'),
+      'end': new Date(today.getFullYear(), today.getMonth(), today.getDate(), '22', '0')
+    }
   }
 ];
