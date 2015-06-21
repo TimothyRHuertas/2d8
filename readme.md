@@ -54,3 +54,5 @@ $ npm test -- NotFoundComponent
 ## License
 
 MIT © [Søren Brokær](http://srn.io)
+
+https://github.com/webpack/webpack/tree/master/examples/multiple-entry-points

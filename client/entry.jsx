@@ -3,6 +3,8 @@
 import 'styles/main.scss';
 
 import React from 'react/addons';
-import IndexComponent from 'components/Index/IndexComponent.jsx';
+import DayComponent from 'components/calendar/DayComponent.jsx';
+import testEntries from 'testData.js';
 
-React.render(<IndexComponent items={[1,2,3]} />, document.body);
+
+React.render(<DayComponent entries={testEntries} />, document.body);

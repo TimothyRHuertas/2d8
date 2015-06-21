@@ -1,6 +1,9 @@
-$background: green;
+$background: none;
 
+/* I stole this from store.apple.com*/
 body {
   background: $background;
-  font-family: "Helvetica Neue", serif;
+  font-family: 'Helvetica Neue', Helvetica, Arial, Verdana, sans-serif;
+  color: rgb(51, 51, 51);
+  -webkit-font-smoothing: antialiased;
 }
