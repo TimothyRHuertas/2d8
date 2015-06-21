@@ -16,6 +16,58 @@ export default class DayComponent extends React.Component {
     its not always necessary, but its not always evil. ipad users will thank me :)
     */
 
+
+    //TODO move to componentWillMount/recieve props
+    //decorate With Confilt Pos
+    var sorted = this.props.entries.sort((a,b) => {
+      if(a>b){
+        return - 1;
+      }
+      else if(a<b){
+        return 1;
+      }
+      else {
+        return 0;
+      }
+    }); //SORT BY START AND DURATION
+
+    //todo you *may need to optmize
+
+    sorted.forEach((currentEntry, outer) => {
+      currentEntry.position = 0;
+      var currentStartTime = currentEntry.time.start.getTime();
+      var currentEndTime = currentEntry.time.end.getTime();
+
+      for(var inner=outer; inner>=0; inner--){
+        var entry = sorted[inner];
+        var startTime = entry.time.start.getTime();
+        var endTime = entry.time.end.getTime();
+
+        if( (entry !== currentEntry) && 
+          ((startTime>=currentStartTime && startTime<=currentEndTime) || 
+            (endTime>=currentStartTime && endTime<=currentEndTime)) ){
+          currentEntry.position++;  
+        }
+      } 
+    });
+
+    /* var itemsInCluster = sorted[sorted.length-1].position;
+    
+    for(var i=sorted.length-1; i>==1; i--){
+      var right = sorted[i];
+      var left = sorted[i-1];
+
+      right.itemsInCluster = itemsInCluster;
+
+      if(right.position === 0){
+        itemsInCluster = left.position
+      }
+
+    }*/
+
+
+    //end
+
     var lines =  [];
     var fontSize = this.props.fontSize;
     var lineHeight = this.props.lineHeight;
@@ -56,7 +108,7 @@ export default class DayComponent extends React.Component {
       height += end.getMinutes()/60 * lineHeight;
 
       return (
-        <div style={{padding: 5, boxSizing: "border-box", position: "absolute", overflow: "hidden", top: top, height: height, left: lineLeft, border: "1px solid green"}}>
+        <div style={{padding: 5, background: "rgb(255, 229, 191)", opacity: .69, boxSizing: "border-box", position: "absolute", overflow: "hidden", top: top, height: height, left: lineLeft, borderLeft: "3px solid #ff9502"}}>
           {entry.title}
         </div>
       );
