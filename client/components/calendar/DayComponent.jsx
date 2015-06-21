@@ -10,46 +10,70 @@ import _ from 'lodash';
 };*/
 
 export default class DayComponent extends React.Component {
-  /*render() {
-    return (
-      <section style={style.main}>
-        <h2>Calendar</h2>
-        <ul ref="indexList" className="index-list">
-          {this.props.entries.map((entry, index) => {
-            return (<li key={index}>entry {entry.title} {entry.time.start.toString()} - {entry.time.end.toString()}</li>);
-          })}
-        </ul>
-      </section>
-    );
-  }*/
-
   render(){
-    /*drawing with absolute position makes apps more performant because you can prevent reflows.  its not always necessary, but its not always evil*/
+    /*
+    drawing with absolute position makes apps more performant because you can prevent reflows.  
+    its not always necessary, but its not always evil. ipad users will thank me :)
+    */
+
     var lines =  [];
-    var fontSize = 40;
-    var lineHeight = 100;
+    var fontSize = this.props.fontSize;
+    var lineHeight = this.props.lineHeight;
+    var lineLeft = fontSize * 1.5;
 
     _.times(25,(idx) => {
       if(idx){
-        lines.push(<div style={{position: "absolute", top: (lineHeight * idx)-fontSize/2, fontSize: fontSize}}>{idx}</div>);
+        var displayDay = idx;
+        fontSize = this.props.fontSize;
+
+        if(displayDay > 12){
+          displayDay = idx - 12;
+        }
+        else if(displayDay === 12 ){
+          displayDay = "Noon"; //you should localize me  
+          fontSize = fontSize/2;
+        }
+
+        lines.push(<div style={{position: "absolute", top: (lineHeight * idx)-fontSize/2 - 1, fontSize: fontSize}}>{displayDay}</div>); //number
       }
 
-      lines.push(<div style={{boxSizing: "border-box", position: "absolute", top: (lineHeight * idx), left: fontSize * 1.5, width: "100%", height: 1, borderTop: "1px solid #e5e5e5"}}/>);      
+      lines.push(<div style={{boxSizing: "border-box", position: "absolute", top: (lineHeight * idx), left: lineLeft, right: 0, height: 1, borderTop: "1px solid #e5e5e5"}}/>);  //hour start  
       
       if(idx!==25) {
-        lines.push(<div style={{boxSizing: "border-box", position: "absolute", top: (lineHeight * idx) - (lineHeight/2), left: fontSize *1.5, width: "100%", height: 1, borderTop: "1px dotted #e5e5e5"}}/>);      
+        lines.push(<div style={{boxSizing: "border-box", position: "absolute", top: (lineHeight * idx) - (lineHeight/2), left: lineLeft, right: 0, height: 1, borderTop: "1px dotted #e5e5e5"}}/>);  //hour middle    
       } 
+    });
+
+    //draw a box for every event
+
+    var events = this.props.entries.map((entry, index) => {
+      var start = entry.time.start;
+      var top = start.getHours() * lineHeight;
+      top += start.getMinutes()/60 * lineHeight;
+
+      var end = entry.time.end;
+      var height = (end.getHours() - start.getHours()) * lineHeight;
+      height += end.getMinutes()/60 * lineHeight;
+
+      return (
+        <div style={{padding: 5, boxSizing: "border-box", position: "absolute", overflow: "hidden", top: top, height: height, left: lineLeft, border: "1px solid green"}}>
+          {entry.title}
+        </div>
+      );
     });
 
 
     return (
-      <div>
+      <div style={{position: "relative", padding: "0 5"}}>
         {lines}
+        {events}
       </div>
     );
   }
 }
 
 DayComponent.defaultProps = {
-  entries: []
+  entries: [],
+  lineHeight: 100,
+  fontSize: 40
 };
