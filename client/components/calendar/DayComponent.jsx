@@ -11,115 +11,7 @@ import _ from 'lodash';
 
 export default class DayComponent extends React.Component {
   render(){
-    /*
-    drawing with absolute position makes apps more performant because you can prevent reflows.  
-    its not always necessary, but its not always evil. ipad users will thank me :)
-    */
-
-
-//TODO cluster by time move to componentWillMount/recieve props
-    //decorate With Confilt Pos
-    var pluckStart = (entry => {return entry.time.start.getTime()});
-    var pluckDuration = (entry => {return entry.time.end.getTime() - entry.time.start.getTime()});
-
-    var sorted = _.sortByOrder(this.props.entries, [pluckStart, pluckDuration], [true, false]);
-
-    //todo you *may need to optmize
-
-    sorted.forEach((currentEntry, outer) => {
-      currentEntry.position = 0;
-      currentEntry.possiblePosition = 0;
-
-      var currentStartTime = currentEntry.time.start.getTime();
-      var currentEndTime = currentEntry.time.end.getTime();
-
-      //populate items in cluster
-
-      
-
-      for(var inner=outer; inner>=0; inner--){
-        //if(outer===3){debugger;}
-        var entry = sorted[inner];
-        var startTime = entry.time.start.getTime();
-        var endTime = entry.time.end.getTime();
-
-        if( (entry !== currentEntry) && //(!entry.position || entry.position<currentEntry.position) &&
-          ((currentStartTime >= startTime && currentStartTime <= endTime) 
-            || (currentEndTime <= endTime && currentEndTime >= startTime)) ){
-          currentEntry.possiblePosition++;
-
-          if(inner){
-            var endTimeOfItemBeforeConflict = sorted[inner-1].time.end.getTime();
-            if(currentStartTime <= endTimeOfItemBeforeConflict || currentEntry.possiblePosition > entry.position){
-              currentEntry.position = currentEntry.possiblePosition; 
-              
-            }
-          }
-          else {
-            currentEntry.position = currentEntry.possiblePosition;
-          }
-          //go back and find  position of conflict
-          //currentEntry.position -= entry.position;  
-        }
-      } 
-
-
-      
-    });
-
-
-
-
-    sorted.forEach((currentEntry) => {
-      currentEntry.itemsInCluster = 0;
-
-      var currentStartTime = currentEntry.time.start.getTime();
-      var currentEndTime = currentEntry.time.end.getTime();
-         sorted.forEach((entry) => {
-          var startTime = entry.time.start.getTime();
-          var endTime = entry.time.end.getTime();
-
-          if(  //(!entry.position || entry.position<currentEntry.position) &&
-            ((currentStartTime >= startTime && currentStartTime <= endTime) 
-              || (currentEndTime <= endTime && currentEndTime >= startTime)) ){
-            currentEntry.itemsInCluster= Math.max(currentEntry.itemsInCluster, entry.position);
-          }  
-        });
-    });
-
-     sorted.forEach((currentEntry) => {
-      currentEntry.itemsInCluster = 0;
-
-      var currentStartTime = currentEntry.time.start.getTime();
-      var currentEndTime = currentEntry.time.end.getTime();
-         sorted.forEach((entry) => {
-          var startTime = entry.time.start.getTime();
-          var endTime = entry.time.end.getTime();
-
-          if(  //(!entry.position || entry.position<currentEntry.position) &&
-            ((currentStartTime >= startTime && currentStartTime <= endTime) 
-              || (currentEndTime <= endTime && currentEndTime >= startTime)) ){
-            currentEntry.itemsInCluster= Math.max(currentEntry.itemsInCluster, entry.itemsInCluster);
-          }  
-        });
-    });
-    /* var itemsInCluster = sorted[sorted.length-1].position + 1;
     
-    for(var i=sorted.length-1; i>=1; i--){
-      var right = sorted[i];
-      var left = sorted[i-1];
-
-      right.itemsInCluster = itemsInCluster;
-      left.itemsInCluster = itemsInCluster;
-
-      if(right.position === 0){
-        itemsInCluster = left.position + 1
-      }
-
-    }*/
-console.log(sorted);
-
-//end
 
     var lines =  [];
     var fontSize = this.props.fontSize;
@@ -149,7 +41,156 @@ console.log(sorted);
       } 
     });
 
-    //draw a box for every event
+    /*box for event*/
+
+    var pluckStart = (entry => {return entry.time.start.getTime()});
+
+    var events = this.props.entries;//_.sortBy(this.props.entries, pluckStart);
+    events.forEach((e,idx) => {e.id = idx+1;});
+console.log(events);
+    var STARTTIME = 0,
+      ENDTIME = 24,
+      HEIGHTOFHOUR = lineHeight,
+      h, m, e,
+      ts, event, leftindex;
+    
+    var MINUTESINDAY = (ENDTIME - STARTTIME) * 60;
+  
+    var timeslots = [];
+    for (var m=0; m<MINUTESINDAY; m++) {
+      timeslots.push([]);
+    }
+
+
+   var EventsById = {};
+  setUpEvents(events);
+  
+  // load events into timeslots - events must be sorted by starttime already
+  var numEvents = events.length;
+  for (e=0; e<numEvents; e++) {
+    event = events[e];
+    for (m=event.start; m<event.stop; m++) {
+      timeslots[m].push(event.id);
+    }
+  }
+  
+  // take the timeslots one at a time
+  // for each event in the timeslot make sure that it has the right numcolumns (max amount for that event)
+  // then check if its leftindex has been set
+  // if not then set it.  find the first free space in that timeslot
+  for ( m=0; m<MINUTESINDAY; m++) {
+    ts = timeslots[m];
+    for ( e=0; e<ts.length; e++) {
+      var event = EventsById[ ts[e] ];
+      var max = ts.length;
+      ts.forEach(function(id){
+          var evt = EventsById[id];
+          max=(evt.numcolumns>max)?evt.numcolumns:max;
+        });
+    
+      if (event.numcolumns <= max) {    
+        event.numcolumns = max;
+      }
+     
+      if (event.leftindex == -1) {
+        leftindex = 0;
+        while (! isFreeSpace(ts, leftindex, event.id)) {
+            leftindex++;
+        }
+        event.leftindex = leftindex;
+      }
+    }
+  }
+  // UPDATE CODE AFTER COMMENT
+  // fix numcolumns
+for (m=0; m<MINUTESINDAY; m++) {
+    ts = timeslots[m];
+    for (e=0; e<ts.length; e++) {
+      event = EventsById[ ts[e] ];
+      var max = ts.length;
+      ts.forEach(function(id){
+          var evt = EventsById[id];
+          max=(evt.numcolumns>max)?evt.numcolumns:max;
+        });
+    
+      if (event.numcolumns <= max) {    
+        event.numcolumns = max;
+      }
+    }
+  }
+  
+  
+  layoutEvents();
+  
+  function isFreeSpace(ts, leftindex, eventid) {
+    var tslength = ts.length;
+    var event;
+    for (var i=0; i<tslength; ++i) {
+      // get the event in this timeslot location
+      event = EventsById[ts[i]];
+      if (event.leftindex == leftindex) {
+        if (event.id != eventid) {
+          return false; // left index taken
+        } else {
+          return true; // this event is in this place
+        }
+      }
+    }
+    return true;
+  }
+  
+  
+  function setUpEvents(events) {
+     var numEvents = events.length;
+     var event, e, pos, stH, stM, etH, etM, height;
+  
+    for (e=0; e<numEvents; e++) {
+      event = events[e];
+      event.leftindex = -1;
+      event.numcolumns = 0;
+      stH = event.time.start.getHours();;
+      stM = event.time.start.getMinutes() / 60; 
+      // need its positions top and bottom in minutes
+      event.start = ((stH - STARTTIME) * 60) + (stM * 60);
+      event.topPos = ((stH - STARTTIME) * HEIGHTOFHOUR) + (stM * HEIGHTOFHOUR);
+      
+      etH = event.time.end.getHours();
+      etM =  event.time.end.getMinutes() / 60;
+      // need its positions top and bottom in minutes
+      event.stop = ((etH - STARTTIME) * 60) + (etM * 60);
+      
+      height = (etH - stH) * HEIGHTOFHOUR;
+    height -= stM * HEIGHTOFHOUR;
+    height += etM * HEIGHTOFHOUR;
+      event.height = height;
+      EventsById[event.id] = event;
+    }  
+  }
+
+  
+  function layoutEvents() {
+    var eventNodes = [];
+    var numEvents = events.length;
+     var event, e, numx, xfactor, left;
+    
+    for (e=0; e<numEvents; e++) {
+      event = events[e];
+      
+      numx = event.numcolumns;
+      xfactor = 1 / numx;
+      left = (event.leftindex * xfactor * 100);
+      eventNodes.push((<div key={event.id} style={{padding: 5, width: Math.floor(100 * xfactor) + '%', background: "rgb(255, 229, 191)", opacity: .69, boxSizing: "border-box", position: "absolute", overflow: "hidden", top: event.topPos, height: event.height, left: (left) + '%', borderLeft: "3px solid #ff9502"}}>
+          {event.title}
+        </div>));
+    }
+
+    return eventNodes;
+
+  }
+  
+var en =layoutEvents();
+
+   /* //draw a box for every event
     var selfWidth = document.body.offsetWidth - lineLeft; ///TODO not ok
 
     var events = this.props.entries.map((entry, index) => {
@@ -168,13 +209,13 @@ console.log(sorted);
           {entry.title}
         </div>
       );
-    });
+    });*/
 
 
     return (
       <div style={{position: "relative", padding: "0 5"}}>
         {lines}
-        {events}
+        {en}
       </div>
     );
   }
