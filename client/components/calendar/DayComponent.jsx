@@ -188,34 +188,17 @@ for (m=0; m<MINUTESINDAY; m++) {
 
   }
   
-var en =layoutEvents();
-
-   /* //draw a box for every event
-    var selfWidth = document.body.offsetWidth - lineLeft; ///TODO not ok
-
-    var events = this.props.entries.map((entry, index) => {
-      var start = entry.time.start;
-      var width = selfWidth/(entry.itemsInCluster + 1);
-      var left = ((selfWidth/(entry.itemsInCluster+1)) * entry.position) + lineLeft;
-      var top = start.getHours() * lineHeight;
-      top += start.getMinutes()/60 * lineHeight;
-
-      var end = entry.time.end;
-      var height = (end.getHours() - start.getHours()) * lineHeight;
-      height += end.getMinutes()/60 * lineHeight;
-
-      return (
-        <div style={{padding: 5, width: width, background: "rgb(255, 229, 191)", opacity: .69, boxSizing: "border-box", position: "absolute", overflow: "hidden", top: top, height: height, left: left, borderLeft: "3px solid #ff9502"}}>
-          {entry.title}
-        </div>
-      );
-    });*/
+  var en =layoutEvents();
 
 
     return (
-      <div style={{position: "relative", padding: "0 5"}}>
-        {lines}
-        {en}
+      <div>
+        <div style={{position: "relative", padding: "0 5"}}>
+          {lines}
+        </div>
+        <div style={{marginLeft: lineLeft, position: "relative"}}> 
+          {en}
+        </div>
       </div>
     );
   }
