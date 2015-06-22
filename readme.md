@@ -1,6 +1,8 @@
-# 2D*
+# Here 2D8 (Here today)
 
-Proof of concept for a calendar
+Proof of concept for a location aware calendar. 
+
+## Deployed at [http://here2d8.com](http://here2d8.com)
 
 ## Install
 
@@ -53,4 +55,6 @@ MIT © [Søren Brokær](http://srn.io)
 https://github.com/webpack/webpack/tree/master/examples/multiple-entry-points
 
 ### TODO
+* Use location cluster to decide which calendar to load.
+* Load dynamic data
 
