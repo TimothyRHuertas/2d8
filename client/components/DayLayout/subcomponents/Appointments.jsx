@@ -1,5 +1,5 @@
 import React from 'react';
-import EventLayoutDecorator from 'components/calendar/utils/EventLayoutDecorator.js';
+import EventLayoutDecorator from 'components/DayLayout/utils/EventLayoutDecorator.js';
 
 
 export default class Appointments extends React.Component {
