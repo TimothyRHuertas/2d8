@@ -13,9 +13,18 @@ var styles = {
   }
 };
 export default class DayAndDetailComponent extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {mainViewClass: "hidden", loaderClass: "visible"};
+  }
+  componentDidMount(){
+    setTimeout(() => {
+      this.setState({mainViewClass: "visible", loaderClass: "hidden"});
+    }, 4000);
+  }
   render(){
     var mainView = (
-      <div>
+      <div className={this.state.mainViewClass}>
         <div style={{position: "absolute", left: "30%", right: 0}}>
           <DayComponent
             entries={this.props.entries} 
@@ -26,13 +35,18 @@ export default class DayAndDetailComponent extends React.Component {
     );
 
     var loadingView = (
-      <div style={{position: 'absolute', top: "50%", left: "50%", marginLeft: -125, marginTop: -200}}>
+      <div className={this.state.loaderClass} style={{position: 'absolute', top: "50%", left: "50%", marginLeft: -125, marginTop: -200}}>
           <CompassComponent />
           <h2 style={styles.loadingLabel}>Finding the nearst calendar...</h2>
       </div>
     );
 
-    return loadingView;
+    return (
+      <div>
+        {loadingView}
+        {mainView}
+      </div>
+    );
   }
 }
 
