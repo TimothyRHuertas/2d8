@@ -6,15 +6,14 @@ so you can lay out the events in a purdy calendar
 
 export default class EventLayoutDecorator {
   decorate (events) {
+    // Sort events
+    events = _.sortBy(events, function(event){ return event.start; });
     events.forEach((event, idx) => {
       event.start = event.time.start.getHours() * 100 + event.time.start.getMinutes() / 60 * 100;
       event.end = event.time.end.getHours() * 100 + event.time.end.getMinutes() / 60 * 100;
       event.id = idx;
+      console.log(idx, event.title);
     });
-
-    // Sort events
-    events = _.sortBy(events, function(event){ return event.start; });
-
     var columnCount = 0,
     stacks = [],
     stack = {end: 0},
@@ -87,7 +86,7 @@ export default class EventLayoutDecorator {
       }
     });
 
-    events.forEach(event => {
+    events.forEach((event) => {
       event.left = dayboxWidth / event.stack.columns.length * event.column;
       event.width = dayboxWidth * (event.colspan / event.stack.columns.length);
       event.height = event.end - event.start;

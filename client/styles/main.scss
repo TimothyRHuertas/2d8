@@ -18,3 +18,13 @@ body {
   opacity:1;
   transition:opacity 1s ease-in;
 }
+
+.header {
+  background-image: -webkit-linear-gradient(#fdfdfd, #f9f9f9);
+  background-image: linear-gradient(#fdfdfd,#f9f9f9);
+}
+
+html, body {
+  padding: 0;
+  margin: 0
+}

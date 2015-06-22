@@ -1,6 +1,7 @@
 import React from 'react';
 import DayComponent from 'components/DayLayout/DayComponent.jsx';
 import CompassComponent from 'components/Compass/CompassComponent.jsx';
+import EventComponent from 'components/EventLayout/EventComponent.jsx';
 
 var styles = {
   loadingLabel: {
@@ -20,12 +21,22 @@ export default class DayAndDetailComponent extends React.Component {
   componentDidMount(){
     setTimeout(() => {
       this.setState({mainViewClass: "visible", loaderClass: "hidden"});
-    }, 4000);
+    }, 1);
   }
   render(){
+    var now = new Date();
+
     var mainView = (
       <div className={this.state.mainViewClass}>
-        <div style={{position: "absolute", left: "30%", right: 0}}>
+        <div className="header" 
+          style={{textAlign: "center", letterSpacing: "normal", fontSize: 23, lineHeight: "48px", position: "absolute", left:0, right:0, height: 45, boxSizing: "border-box", borderBottom: "1px solid rgb(229, 172, 169)"}}>
+          <strong style={{fontWeight: 500}}>{now.format("{Mon} {dd}")}</strong>
+          <span style={{fontWeight: 300}}>{"  " + now.format("{yyyy}")}</span>
+        </div>
+        <div style={{position: "absolute", left: 0, bottom: 0, right: "70%", top: 45}}>
+          <EventComponent event={this.props.entries[0]}/>
+        </div>
+        <div style={{position: "absolute", left: "30%", right: 10, top: 45, bottom: 0, overflowY: "auto"}}>
           <DayComponent
             entries={this.props.entries} 
             lineHeight={this.props.lineHeight} 
@@ -53,5 +64,5 @@ export default class DayAndDetailComponent extends React.Component {
 DayAndDetailComponent.defaultProps = {
   entries: [],
   lineHeight: 100,
-  fontSize: 40
+  fontSize: 30
 };
