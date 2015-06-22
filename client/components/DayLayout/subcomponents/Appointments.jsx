@@ -1,8 +1,8 @@
 import React from 'react';
 import EventLayoutDecorator from 'components/DayLayout/utils/EventLayoutDecorator.js';
 
-var selectedStyle = {background: "#ff9502", color: "#ffffff", opacity: 1},
-unselectedStyle = {background: "rgb(255, 229, 191)", color: "#a66100", opacity: .69};
+var selectedStyle = {background: "#ff9502", color: "#ffffff", className: "visible"},
+unselectedStyle = {background: "rgb(255, 229, 191)", color: "#a66100", className: "opaque"};
 
 export default class Appointments extends React.Component {
   render(){
@@ -22,10 +22,10 @@ export default class Appointments extends React.Component {
         }
 
         var pos = event;
-        return (<div key={event.id} style={{color: styles.color, top: pos.top, 
+        return (<div className={styles.className} key={event.id} style={{color: styles.color, top: pos.top, 
             height: pos.height, left: pos.left + '%', width: pos.width +"%", 
             fontSize: ".8em",
-            padding: "5 3", background: styles.background, opacity: styles.opacity, boxSizing: "border-box", 
+            padding: "5 3", background: styles.background, boxSizing: "border-box", 
             position: "absolute", overflow: "hidden",  borderLeft: "3px solid #ff9502"}}>
            {event.title}
           </div>);

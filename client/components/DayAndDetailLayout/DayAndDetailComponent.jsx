@@ -13,16 +13,34 @@ var styles = {
     fontWeight: 200
   }
 };
+
+var interval;
+
 export default class DayAndDetailComponent extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {mainViewClass: "hidden", loaderClass: "visible"};
+    this.state = {mainViewClass: "hidden", loaderClass: "visible", selectedIdx: 0};
   }
   componentDidMount(){
     setTimeout(() => {
       this.setState({mainViewClass: "visible", loaderClass: "hidden"});
     }, 1);
+
+    interval = setInterval(()=>{
+      var selectedIdx = this.state.selectedIdx + 1;
+
+      if(selectedIdx === this.props.entries.length){
+        selectedIdx = 0;
+      }
+
+      this.setState({selectedIdx: selectedIdx});
+    }, 1000);
   }
+
+  componentWillUnmount(){
+    clearInterval(interval);
+  }
+
   render(){
     var now = new Date();
 
@@ -34,10 +52,11 @@ export default class DayAndDetailComponent extends React.Component {
           <span style={{fontWeight: 300}}>{"  " + now.format("{yyyy}")}</span>
         </div>
         <div style={{position: "absolute", left: 0, bottom: 0, right: "70%", top: 45}}>
-          <EventComponent event={this.props.entries[0]}/>
+          <EventComponent event={this.props.entries[this.state.selectedIdx]}/>
         </div>
         <div style={{position: "absolute", left: "30%", right: 10, top: 45, bottom: 0, overflowY: "auto"}}>
           <DayComponent
+            selectedIdx = {this.state.selectedIdx}
             entries={this.props.entries} 
             lineHeight={this.props.lineHeight} 
             fontSize={this.props.fontSize} />

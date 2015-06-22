@@ -7,7 +7,7 @@ export default class DayComponent extends React.Component {
     return (
       <div>
         <DaySlots lineHeight={this.props.lineHeight} fontSize={this.props.fontSize} />
-        <Appointments entries={this.props.entries} lineHeight={this.props.lineHeight} fontSize={this.props.fontSize} />
+        <Appointments selectedIdx={this.props.selectedIdx} entries={this.props.entries} lineHeight={this.props.lineHeight} fontSize={this.props.fontSize} />
       </div>
     );
   }
@@ -16,5 +16,6 @@ export default class DayComponent extends React.Component {
 DayComponent.defaultProps = {
   entries: [],
   lineHeight: 100,
-  fontSize: 40
+  fontSize: 40,
+  selectedIdx: 0
 };
