@@ -7,13 +7,13 @@ so you can lay out the events in a purdy calendar
 export default class EventLayoutDecorator {
   decorate (events) {
     // Sort events
-    events = _.sortBy(events, function(event){ return event.start; });
     events.forEach((event, idx) => {
       event.start = event.time.start.getHours() * 100 + event.time.start.getMinutes() / 60 * 100;
       event.end = event.time.end.getHours() * 100 + event.time.end.getMinutes() / 60 * 100;
-      event.id = idx;
-      console.log(idx, event.title);
     });
+
+    events = _.sortBy(events, function(event){ return event.start; });
+
     var columnCount = 0,
     stacks = [],
     stack = {end: 0},
@@ -21,6 +21,7 @@ export default class EventLayoutDecorator {
 
     // Loop through each event
     events.forEach((event, index) => {
+      event.id = index;
       // Each event gets placed in a stack. A stack remembers how many
       // columns there are currently overlapping and the latest end time.
       // If the current event starts after the stack, we create a new stack

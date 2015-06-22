@@ -19,26 +19,44 @@ var interval;
 export default class DayAndDetailComponent extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {mainViewClass: "hidden", loaderClass: "visible", selectedIdx: 0};
+    var sortedEvents = this.sortedEvents(this.props.entries);
+
+    this.state = {mainViewClass: "hidden", loaderClass: "visible", selectedIdx: 0, scollTop: 0, sortedEvents: sortedEvents};
+  }
+  componentWillReceiveProps(nextProps){
+    var sortedEvents = this.sortedEvents(nextProps.entries);
+    this.setState({sortedEvents: sortedEvents});
+  }
+  sortedEvents(entries){
+    return _.sortBy(entries, function(event){ return event.time.start.getTime(); }); 
   }
   componentDidMount(){
     setTimeout(() => {
       this.setState({mainViewClass: "visible", loaderClass: "hidden"});
+      interval = setInterval(()=>{
+        var selectedIdx = this.state.selectedIdx + 1;
+
+        if(selectedIdx === this.props.entries.length){
+          selectedIdx = 0;
+        }
+
+        this.setState({selectedIdx: selectedIdx});
+      }, 1000*6);
     }, 1);
-
-    interval = setInterval(()=>{
-      var selectedIdx = this.state.selectedIdx + 1;
-
-      if(selectedIdx === this.props.entries.length){
-        selectedIdx = 0;
-      }
-
-      this.setState({selectedIdx: selectedIdx});
-    }, 1000);
   }
 
   componentWillUnmount(){
     clearInterval(interval);
+  }
+
+  componentDidUpdate(){
+    this.syncScroll(); 
+  }
+
+  syncScroll(){
+    var event = this.state.sortedEvents[this.state.selectedIdx];
+    var scroller = React.findDOMNode(this.refs.scroller);
+    scroller.scrollTop = event.top;
   }
 
   render(){
@@ -52,9 +70,9 @@ export default class DayAndDetailComponent extends React.Component {
           <span style={{fontWeight: 300}}>{"  " + now.format("{yyyy}")}</span>
         </div>
         <div style={{position: "absolute", left: 0, bottom: 0, right: "70%", top: 45}}>
-          <EventComponent event={this.props.entries[this.state.selectedIdx]}/>
+          <EventComponent event={this.state.sortedEvents[this.state.selectedIdx]}/>
         </div>
-        <div style={{position: "absolute", left: "30%", right: 10, top: 45, bottom: 0, overflowY: "auto"}}>
+        <div ref="scroller" style={{position: "absolute", left: "30%", right: 10, top: 45, bottom: 0, overflowY: "auto"}}>
           <DayComponent
             selectedIdx = {this.state.selectedIdx}
             entries={this.props.entries} 
