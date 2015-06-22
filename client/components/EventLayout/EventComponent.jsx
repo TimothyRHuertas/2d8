@@ -61,7 +61,7 @@ export default class EventComponent extends React.Component {
           
           <div>
             <span style={{fontWeight: 300, fontSize: ".9rem"}}>Featuring:</span> 
-            <span style={{fontWeight: 400, marginLeft: 5, fontSize: "1.2rem"}}>{event.presenter.join(",")}</span>
+            <span style={{fontWeight: 400, marginLeft: 5, fontSize: "1.2rem"}}>{event.presenter.join(", ")}</span>
           </div>
           {seatsNode}
           <div style={{marginTop: "1.8rem", fontStyle: "italic", wordWrap: "break-word"}}>{event.description}</div>

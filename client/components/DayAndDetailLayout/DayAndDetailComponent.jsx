@@ -42,7 +42,7 @@ export default class DayAndDetailComponent extends React.Component {
 
         this.setState({selectedIdx: selectedIdx});
       }, 1000*6);
-    }, 1);
+    }, 4000);
   }
 
   componentWillUnmount(){
