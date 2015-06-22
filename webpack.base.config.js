@@ -52,7 +52,8 @@ module.exports = {
     ],
 
     loaders: [
-      {test: /\.scss$/, loader: "style!css!autoprefixer?browsers=last 2 version!sass?outputStyle=expanded"}
+      {test: /\.scss$/, loader: "style!css!autoprefixer?browsers=last 2 version!sass?outputStyle=expanded"},
+      {test: /\.(png|jpg)$/, loader: 'url-loader?limit=8192'} 
     ],
 
     noParse: /\.min\.js/

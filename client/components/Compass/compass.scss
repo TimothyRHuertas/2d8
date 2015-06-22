@@ -1,0 +1,58 @@
+.compass-pointer {
+  background-image: url('packed-3.png');
+  background-position: 0px -250px;
+  background-repeat: no-repeat;
+  z-index: 2;
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  height: 250px;
+  width: 250px;
+  -webkit-animation: compass-oscillate 3s ease-in-out infinite;
+  -moz-animation: compass-oscillate 3s ease-in-out infinite;
+  -ms-animation: compass-oscillate 3s ease-in-out infinite;
+  animation: compass-oscillate 3s ease-in-out infinite;
+}
+
+
+@-webkit-keyframes compass-oscillate {
+    0% {
+        -webkit-transform: rotate(-25deg)
+    }
+
+    70% {
+        -webkit-transform: rotate(35deg)
+    }
+
+    100% {
+        -webkit-transform: rotate(-25deg)
+    }
+}
+
+@-moz-keyframes compass-oscillate {
+    0% {
+        -moz-transform: rotate(-25deg)
+    }
+
+    70% {
+        -moz-transform: rotate(35deg)
+    }
+
+    100% {
+        -moz-transform: rotate(-25deg)
+    }
+}
+
+@keyframes compass-oscillate {
+    0% {
+        transform: rotate(-25deg)
+    }
+
+    70% {
+        transform: rotate(35deg)
+    }
+
+    100% {
+        transform: rotate(-25deg)
+    }
+}
