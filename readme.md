@@ -1,21 +1,16 @@
-# react-webpack-boilerplate
-[![Build Status](http://img.shields.io/travis/srn/react-webpack-boilerplate.svg?style=flat-square)](https://travis-ci.org/srn/react-webpack-boilerplate) [![Dependency Status](http://img.shields.io/gemnasium/srn/react-webpack-boilerplate.svg?style=flat-square)](https://gemnasium.com/srn/react-webpack-boilerplate) [![Build Status](http://img.shields.io/coveralls/srn/react-webpack-boilerplate.svg?style=flat-square)](https://coveralls.io/r/srn/react-webpack-boilerplate)
+# 2D*
 
-> Simple production-ready boilerplate for [React](http://facebook.github.io/react/) and [Webpack](http://webpack.github.io/) (SASS and React hot reloading)
+Proof of concept for a calendar
 
 ## Install
 
 ```sh
 # Clone repository
-$ git clone https://github.com/srn/react-webpack-boilerplate.git && cd react-webpack-boilerplate
+$ git clone https://github.com/TimothyRHuertas/2d8 && cd 2d8
 
 # Install dependencies
 $ npm install
 ```
-
-Alternatively, you can deploy your own copy with one click using this button:
-
-[![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy?template=https://github.com/srn/react-webpack-boilerplate)
 
 ## Development
 
@@ -51,8 +46,11 @@ Only run specific tests
 $ npm test -- NotFoundComponent
 ```
 
-## License
+## License (This project uses the react hot load template created by)
 
 MIT © [Søren Brokær](http://srn.io)
 
 https://github.com/webpack/webpack/tree/master/examples/multiple-entry-points
+
+### TODO
+

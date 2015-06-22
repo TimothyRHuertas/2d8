@@ -3,7 +3,6 @@ import DaySlots from 'components/calendar/subcomponents/DaySlots.jsx';
 import Appointments from 'components/calendar/subcomponents/Appointments.jsx';
 
 export default class DayComponent extends React.Component {
-
   render(){
     return (
       <div>
@@ -12,9 +11,6 @@ export default class DayComponent extends React.Component {
       </div>
     );
   }
-
-  
-
 }
 
 DayComponent.defaultProps = {
