@@ -33,3 +33,9 @@ html, body {
   opacity: .69;
   transition:opacity 1s ease-out;  
 }
+
+.truncate {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}

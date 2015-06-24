@@ -33,15 +33,19 @@ export default class DayAndDetailComponent extends React.Component {
   componentDidMount(){
     setTimeout(() => {
       this.setState({mainViewClass: "visible", loaderClass: "hidden"});
-      interval = setInterval(()=>{
-        var selectedIdx = this.state.selectedIdx + 1;
 
-        if(selectedIdx === this.props.entries.length){
-          selectedIdx = 0;
-        }
+      setTimeout(()=>{ //give time for the compass to fade out
+        interval = setInterval(()=>{
+          var selectedIdx = this.state.selectedIdx + 1;
 
-        this.setState({selectedIdx: selectedIdx});
-      }, 1000*6);
+          if(selectedIdx === this.props.entries.length){
+            selectedIdx = 0;
+          }
+
+          this.setState({selectedIdx: selectedIdx});
+        }, 1000*6);
+      }, 2000);
+      
     }, 4000);
   }
 
@@ -50,12 +54,12 @@ export default class DayAndDetailComponent extends React.Component {
   }
 
   componentDidUpdate(){
-    this.syncScroll(); 
+    this.syncScroll();   
   }
 
   syncScroll(){
-    var event = this.state.sortedEvents[this.state.selectedIdx];
-    document.body.scrollTop = event.top;
+      var event = this.state.sortedEvents[this.state.selectedIdx];
+      document.body.scrollTop = event.top;
   }
 
   render(){
@@ -82,7 +86,7 @@ export default class DayAndDetailComponent extends React.Component {
     );
 
     var loadingView = (
-      <div className={this.state.loaderClass} style={{position: 'absolute', top: "50%", left: "50%", marginLeft: -125, marginTop: -200}}>
+      <div className={this.state.loaderClass} style={{position: 'fixed', top: "50%", left: "50%", marginLeft: -125, marginTop: -200}}>
           <CompassComponent />
           <h2 style={styles.loadingLabel}>Finding the nearst calendar...</h2>
       </div>

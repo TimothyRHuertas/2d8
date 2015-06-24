@@ -44,7 +44,7 @@ export default class EventComponent extends React.Component {
   
     return (
       <div style={{padding: "5 15"}}>
-        <div style={{color: "#1a1a1a", fontSize: "2rem", letterSpacing: "-.06rem", fontWeight: 300}}>{event.title}</div>
+        <div className="truncate" style={{color: "#1a1a1a", fontSize: "2rem", letterSpacing: "-.06rem", fontWeight: 300}}>{event.title}</div>
         <div style={{fontWeight: 300, fontSize: "1.1rem"}}>{start.format('{12hr}:{mm}{tt}')}-{end.format('{12hr}:{mm}{tt}')} (<span>{relative}</span>)</div>
         <div style={{margin: "5 0", background: "#e5e5e5", height: 3, width: "100%"}} />
 
