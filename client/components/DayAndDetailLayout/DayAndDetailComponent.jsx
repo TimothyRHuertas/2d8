@@ -65,14 +65,14 @@ export default class DayAndDetailComponent extends React.Component {
     var mainView = (
       <div className={this.state.mainViewClass}>
         <div className="header" 
-          style={{textAlign: "center", letterSpacing: "normal", fontSize: 23, lineHeight: "48px", position: "absolute", left:0, right:0, height: 45, boxSizing: "border-box", borderBottom: "1px solid rgb(229, 172, 169)"}}>
+          style={{zIndex: 2, textAlign: "center", letterSpacing: "normal", fontSize: 23, lineHeight: "48px", position: "fixed", left:0, right:0, height: 45, boxSizing: "border-box", borderBottom: "1px solid rgb(229, 172, 169)"}}>
           <strong style={{fontWeight: 500}}>{now.format("{Mon} {dd}")}</strong>
           <span style={{fontWeight: 300}}>{"  " + now.format("{yyyy}")}</span>
         </div>
-        <div style={{position: "absolute", left: 0, bottom: 0, right: "70%", top: 45}}>
+        <div style={{position: "fixed", left: 0, bottom: 0, right: "70%", top: 45}}>
           <EventComponent event={this.state.sortedEvents[this.state.selectedIdx]}/>
         </div>
-        <div ref="scroller" style={{position: "absolute", left: "30%", right: 10, top: 45, bottom: 0, overflowY: "auto"}}>
+        <div ref="scroller" style={{position: "absolute", left: "30%", right: 10, top: 45}}>
           <DayComponent
             selectedIdx = {this.state.selectedIdx}
             entries={this.props.entries} 
