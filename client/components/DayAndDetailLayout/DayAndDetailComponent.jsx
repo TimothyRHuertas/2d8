@@ -55,8 +55,7 @@ export default class DayAndDetailComponent extends React.Component {
 
   syncScroll(){
     var event = this.state.sortedEvents[this.state.selectedIdx];
-    var scroller = React.findDOMNode(this.refs.scroller);
-    scroller.scrollTop = event.top;
+    document.body.scrollTop = event.top;
   }
 
   render(){
