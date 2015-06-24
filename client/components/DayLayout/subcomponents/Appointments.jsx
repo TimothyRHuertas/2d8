@@ -22,7 +22,7 @@ export default class Appointments extends React.Component {
         }
 
         var pos = event;
-        return (<div className={styles.className + " truncate"} key={event.id} style={{color: styles.color, top: pos.top, 
+        return (<div className={styles.className} key={event.id} style={{color: styles.color, top: pos.top, 
             height: pos.height, left: pos.left + '%', width: pos.width +"%", 
             fontSize: ".8em",
             padding: "5 3", background: styles.background, boxSizing: "border-box", 
